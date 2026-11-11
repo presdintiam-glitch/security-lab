@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -34,43 +33,56 @@
       color: white;
       cursor: pointer;
     }
+    .consent {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .consent input {
+      width: auto;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>نموذج الاختبار الأمني</h2>
-    <p>نموذج تدريبي لإرسال بيانات غير حساسة.</p>
+  <main class="container">
+    <h2>مختبر الأمن السيبراني</h2>
+    <p>نموذج تدريبي لإرسال بيانات غير حساسة بموافقتك.</p>
 
-    <form id="testForm">
-      <input name="name" placeholder="الاسم التجريبي" required>
-      <input name="email" type="email" placeholder="البريد التجريبي" required>
-      <textarea name="message" placeholder="رسالة الاختبار" required></textarea>
+    <form name="security-test"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field">
+
+      <input type="hidden" name="form-name"
+             value="security-test">
+
+      <p hidden>
+        <label>لا تملأ هذا الحقل:
+          <input name="bot-field">
+        </label>
+      </p>
+
+      <label for="name">الاسم التجريبي</label>
+      <input id="name" name="name"
+             autocomplete="name" required>
+
+      <label for="email">البريد الإلكتروني</label>
+      <input id="email" name="email"
+             type="email" required>
+
+      <label for="message">رسالة الاختبار</label>
+      <textarea id="message" name="message"
+                required></textarea>
+
+      <label class="consent">
+        <input type="checkbox" name="consent"
+               value="yes" required>
+        أوافق على إرسال بيانات الاختبار هذه.
+      </label>
+
       <button type="submit">إرسال الاختبار</button>
     </form>
-
-    <p id="status"></p>
-  </div>
-
-  <script>
-    document.getElementById("testForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const status = document.getElementById("status");
-      status.textContent = "جارٍ الإرسال...";
-
-      try {
-        const response = await fetch("/.netlify/functions/contact", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
-        });
-
-        const result = await response.json();
-        status.textContent = result.message;
-        if (response.ok) e.target.reset();
-      } catch {
-        status.textContent = "تعذر الاتصال بالخدمة.";
-      }
-    });
-  </script>
+  </main>
 </body>
 </html>
