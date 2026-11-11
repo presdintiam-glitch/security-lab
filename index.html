@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مختبر الأمن السيبراني</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: white;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 14px;
+      width: min(85%, 350px);
+    }
+    input, textarea, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 7px;
+      border: 1px solid #475569;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>نموذج الاختبار الأمني</h2>
+    <p>نموذج تدريبي لإرسال بيانات غير حساسة.</p>
+
+    <form id="testForm">
+      <input name="name" placeholder="الاسم التجريبي" required>
+      <input name="email" type="email" placeholder="البريد التجريبي" required>
+      <textarea name="message" placeholder="رسالة الاختبار" required></textarea>
+      <button type="submit">إرسال الاختبار</button>
+    </form>
+
+    <p id="status"></p>
+  </div>
+
+  <script>
+    document.getElementById("testForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      status.textContent = "جارٍ الإرسال...";
+
+      try {
+        const response = await fetch("/.netlify/functions/contact", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
+        });
+
+        const result = await response.json();
+        status.textContent = result.message;
+        if (response.ok) e.target.reset();
+      } catch {
+        status.textContent = "تعذر الاتصال بالخدمة.";
+      }
+    });
+  </script>
+</body>
+</html>
